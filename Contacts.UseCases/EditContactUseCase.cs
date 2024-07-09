@@ -4,17 +4,18 @@ using Contact = Contacts.CoreBusiness.Contact;
 
 namespace Contacts.UseCases
 {
-    public class ViewContactUseCase : IViewContactUseCase
+    public class EditContactUseCase : IEditContactUseCase
     {
         private readonly IContactRepository contactRepository;
 
-        public ViewContactUseCase(IContactRepository contactRepository)
+        public EditContactUseCase(IContactRepository contactRepository)
         {
             this.contactRepository = contactRepository;
+
         }
-        public async Task<Contact> ExecuteAsync(int contactId)
+        public async Task ExecuteAsync(int contactId, Contact contact)
         {
-            return await this.contactRepository.GetContactByIdAsync(contactId);
+            await this.contactRepository.UpdateContactAsync(contactId, contact);
         }
     }
 }

@@ -2,6 +2,6 @@
 {
     public interface IViewContactUseCase
     {
-        Task<List<CoreBusiness.Contact>> ExecuteAsync(string filterText);
+        Task<CoreBusiness.Contact> ExecuteAsync(int contactId);
     }
 }
