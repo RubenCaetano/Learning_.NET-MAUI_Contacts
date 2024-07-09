@@ -1,4 +1,5 @@
 ﻿using Contacts.UseCases.PluginInterfaces;
+using static System.Net.Mime.MediaTypeNames;
 using Contact = Contacts.CoreBusiness.Contact;
 
 namespace Contacts.Plugins.DataStore.InMemory
@@ -21,31 +22,63 @@ namespace Contacts.Plugins.DataStore.InMemory
             };
         }
 
-        public Task<List<Contact>> GetContactsAsync(string filterText)
+        public Task<Contact> GetContactByIdAsync(int contactId)
         {
-            throw new NotImplementedException();
+            var contact = _contacts.FirstOrDefault(x => x.ContactId == contactId);
+
+            if (contact == null) return null;
+
+            return Task.FromResult(new Contact
+            {
+                ContactId = contactId,
+                Address = contact.Address,
+                Email = contact.Email,
+                Name = contact.Name,
+                Phone = contact.Phone
+            });
         }
 
-        public static Task<List<Contact>> SearchContact(string text)
+        public Task<List<Contact>> GetContactsAsync(string filterText)
         {
-            var contacts = _contacts.Where(x => !string.IsNullOrWhiteSpace(x.Name) && x.Name.Contains(text, StringComparison.OrdinalIgnoreCase)).ToList();
+            if (string.IsNullOrWhiteSpace(filterText))
+            {
+                return Task.FromResult(_contacts);
+            }
+
+            var contacts = _contacts.Where(x => !string.IsNullOrWhiteSpace(x.Name) && x.Name.Contains(filterText, StringComparison.OrdinalIgnoreCase)).ToList();
 
             if (contacts == null || contacts.Count <= 0)
-                contacts = _contacts.Where(x => !string.IsNullOrWhiteSpace(x.Email) && x.Email.Contains(text, StringComparison.OrdinalIgnoreCase)).ToList();
+                contacts = _contacts.Where(x => !string.IsNullOrWhiteSpace(x.Email) && x.Email.Contains(filterText, StringComparison.OrdinalIgnoreCase)).ToList();
             else
                 return Task.FromResult(contacts);
 
             if (contacts == null || contacts.Count <= 0)
-                contacts = _contacts.Where(x => !string.IsNullOrWhiteSpace(x.Address) && x.Address.Contains(text, StringComparison.OrdinalIgnoreCase)).ToList();
+                contacts = _contacts.Where(x => !string.IsNullOrWhiteSpace(x.Address) && x.Address.Contains(filterText, StringComparison.OrdinalIgnoreCase)).ToList();
             else
                 return Task.FromResult(contacts);
 
             if (contacts == null || contacts.Count <= 0)
-                contacts = _contacts.Where(x => !string.IsNullOrEmpty(x.Phone) && x.Phone.Contains(text, StringComparison.OrdinalIgnoreCase)).ToList();
+                contacts = _contacts.Where(x => !string.IsNullOrEmpty(x.Phone) && x.Phone.Contains(filterText, StringComparison.OrdinalIgnoreCase)).ToList();
             else
                 return Task.FromResult(contacts);
 
             return Task.FromResult(contacts);
+        }
+
+        public Task UpdateContactAsync(int contactId, Contact contact)
+        {
+            if (contactId != contact.ContactId) return Task.CompletedTask;
+
+            var contactToUpdate = _contacts.FirstOrDefault(x => x.ContactId == contactId);
+            if (contactToUpdate != null)
+            {
+                contactToUpdate.Address = contact.Address;
+                contactToUpdate.Email = contact.Email;
+                contactToUpdate.Phone = contact.Phone;
+                contactToUpdate.Name = contact.Name;
+            }
+
+            return Task.CompletedTask;
         }
     }
 }
