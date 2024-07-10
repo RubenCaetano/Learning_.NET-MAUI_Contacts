@@ -22,6 +22,26 @@ namespace Contacts.Plugins.DataStore.InMemory
             };
         }
 
+        public Task AddContactAsync(CoreBusiness.Contact contact)
+        {
+            int maxId = _contacts.Max(x => x.ContactId);
+            contact.ContactId = maxId + 1;
+            _contacts.Add(contact);
+
+            return Task.CompletedTask;
+        }
+
+        public Task DeleteContactAsync(int contactId)
+        {
+            var contact = _contacts.FirstOrDefault(x => x.ContactId == contactId);
+            if (contact != null) 
+            { 
+                _contacts.Remove(contact); 
+            }
+
+            return Task.CompletedTask;
+        }
+
         public Task<Contact> GetContactByIdAsync(int contactId)
         {
             var contact = _contacts.FirstOrDefault(x => x.ContactId == contactId);

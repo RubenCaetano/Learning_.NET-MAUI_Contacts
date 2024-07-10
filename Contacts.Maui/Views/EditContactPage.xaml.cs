@@ -1,13 +1,12 @@
-using Contacts.Maui.Models;
 using Contacts.UseCases.Interfaces;
-using Contact = Contacts.Maui.Models.Contact;
+using Contact = Contacts.CoreBusiness.Contact;
 
 namespace Contacts.Maui.Views;
 
 [QueryProperty(nameof(ContactId),"Id")]
 public partial class EditContactPage : ContentPage
 {
-	private CoreBusiness.Contact contact;
+	private Contact contact;
     private readonly IViewContactUseCase viewContactUseCase;
     private readonly IEditContactUseCase editContactUseCase;
 
