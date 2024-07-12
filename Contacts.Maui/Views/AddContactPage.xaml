@@ -10,7 +10,6 @@
                          OnSave="contactCtrl_OnSave"
                          OnCancel="contactCtrl_OnCancel"
                          OnError="contactCtrl_OnError">
-
     </controls:ContactControl>
     
 </ContentPage>
